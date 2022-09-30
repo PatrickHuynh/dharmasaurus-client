@@ -17,12 +17,12 @@ const Navbar = () => {
             <Link className={`btn ${loc.pathname == "/" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/">
               Home
             </Link>
-            <Link className={`btn ${loc.pathname == "/definitions" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/definitions">
+            {/* <Link className={`btn ${loc.pathname == "/definitions" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/definitions">
               Definitions
             </Link>
             <Link className={`btn ${loc.pathname == "/about" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/about">
               About
-            </Link>
+            </Link> */}
             <Link className={`btn btn-outline-primary m-1`} to="/login">
               Login
             </Link>

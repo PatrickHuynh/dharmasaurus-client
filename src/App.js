@@ -12,9 +12,9 @@ function App() {
       <Navbar />
       <Container fluid className="p-0 m-0">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/definitions" element={<Definitions />} />
-          <Route path="/about" element={<About />} />
+          {/* <Route path="/" element={<Home />} /> */}
+          <Route path="/" element={<Definitions />} />
+          {/* <Route path="/about" element={<About />} /> */}
           <Route path="/login" element={<Login />} />
         </Routes>
       </Container>
