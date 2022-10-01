@@ -17,6 +17,9 @@ const Navbar = () => {
             <Link className={`btn ${loc.pathname == "/" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/">
               Home
             </Link>
+            <Link className={`btn ${loc.pathname == "/outlines" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/outlines">
+              Outlines
+            </Link>
             {/* <Link className={`btn ${loc.pathname == "/definitions" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/definitions">
               Definitions
             </Link>
