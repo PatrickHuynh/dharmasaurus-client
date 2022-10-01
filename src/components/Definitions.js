@@ -8,11 +8,13 @@ import stringSimilarity from "string-similarity";
 const Definitions = () => {
   const [objects, setObjects] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [loadingObjects, setLoadingObjects] = useState(true);
 
   useEffect(() => {
     const getObjects = async () => {
       let objectsFromServer = await fetchObjects();
       objectsFromServer.sort((a, b) => (a.name > b.name ? 1 : -1));
+      setLoadingObjects(false);
       setObjects(objectsFromServer);
     };
     getObjects();
@@ -60,7 +62,9 @@ const Definitions = () => {
           <Form.Control placeholder="Search" aria-label="Search" onChange={handleChangeSearch} />
         </InputGroup>
       </Container>
-      {objects.length > 0 &&
+      {loadingObjects && <p className="p-3">Loading...</p>}
+      {!loadingObjects &&
+        objects.length > 0 &&
         filterSearchObjects().map((obj) => {
           return (
             <Card key={obj.id} className="m-1 bg-light border border-dark border-2">
