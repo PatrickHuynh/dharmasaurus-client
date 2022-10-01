@@ -4,7 +4,7 @@ const Outlines = () => {
   return (
     <Container fluid>
       <Row>
-        <Col style={{}} className="overflow-scroll">
+        <Col className="overflow-scroll">
           <img src="/Lam Rim Chen Mo Outline.svg" />
         </Col>
       </Row>
