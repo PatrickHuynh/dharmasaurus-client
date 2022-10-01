@@ -5,7 +5,7 @@ const Outlines = () => {
     <Container fluid>
       <Row>
         <Col className="overflow-scroll">
-          <img src="/Lam Rim Chen Mo Outline.svg" />
+          <img src="https://raw.githubusercontent.com/PatrickHuynh/dharma-outlines/main/lam%20rim%20chen%20mo/lam%20rim%20chen%20mo%20-%20outline.svg" />
         </Col>
       </Row>
     </Container>
