@@ -5,6 +5,7 @@ import About from "./components/About";
 import Home from "./components/Home";
 import Definitions from "./components/Definitions";
 import Login from "./components/Login";
+import Outlines from "./components/Outlines";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/" element={<Definitions />} />
           {/* <Route path="/about" element={<About />} /> */}
+          <Route path="/outlines" element={<Outlines />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </Container>
