@@ -10,14 +10,16 @@ const Navbar = () => {
       <Container fluid className="bg-dark">
         <Row>
           <Col>
-            <img src="/stegosaurus.png" height="50" />
-            <b className="text-light">&nbsp;&nbsp;Dharmasaurus</b>
+            <Link className={`m-1 text-light`} style={{ textDecoration: "none" }} to="/">
+              <img src="/stegosaurus.png" height="50" />
+              <b> Dharmasaurus</b>
+            </Link>
           </Col>
           <Col md="auto align-self-center">
             <Link className={`btn ${loc.pathname == "/" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/">
-              Home
+              Definitions
             </Link>
-            <Link className={`btn ${loc.pathname == "/outlines" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/outlines">
+            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-secondary" : "btn-outline-light"} m-1`} to="/outlines">
               Outlines
             </Link>
             {/* <Link className={`btn ${loc.pathname == "/definitions" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/definitions">

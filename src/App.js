@@ -6,6 +6,8 @@ import Home from "./components/Home";
 import Definitions from "./components/Definitions";
 import Login from "./components/Login";
 import Outlines from "./components/Outlines";
+import LamRimChenMo from "./components/outlines/lrcm/LamRimChenMo";
+import LogicReasons from "./components/outlines/logic/LogicReasons";
 
 function App() {
   return (
@@ -13,11 +15,11 @@ function App() {
       <Navbar />
       <Container fluid className="p-0 m-0">
         <Routes>
-          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/" element={<Definitions />} />
-          {/* <Route path="/about" element={<About />} /> */}
-          <Route path="/outlines" element={<Outlines />} />
-          <Route path="/login" element={<Login />} />
+          <Route exact path="outlines" element={<Outlines />} />
+          <Route exact path="outlines/lrcm" element={<LamRimChenMo />} />
+          <Route exact path="outlines/logic\reasons" element={<LogicReasons />} />
+          <Route path="login" element={<Login />} />
         </Routes>
       </Container>
     </BrowserRouter>
