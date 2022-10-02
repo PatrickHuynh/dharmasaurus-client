@@ -31,6 +31,10 @@ const Navbar = () => {
             <Link className={`btn btn-outline-primary m-1`} to="/login">
               Login
             </Link>
+            <span>{"  "}</span>
+            <a href="https://discord.gg/gNggmHtV3w" target="blank">
+              <img src="\discord.svg" height="20" />
+            </a>
           </Col>
         </Row>
       </Container>
