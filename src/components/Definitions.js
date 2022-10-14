@@ -108,7 +108,7 @@ const Definitions = () => {
   };
 
   return (
-    <Container fluid className="m-0 p-0">
+    <Container fluid className="m-0">
       {loadingObjects && loadingSpinner("Loading definitions from database...")}
       {!loadingObjects && (
         <>
