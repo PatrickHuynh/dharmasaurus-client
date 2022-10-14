@@ -123,7 +123,7 @@ const Definitions = () => {
                     <h6>Filter Main Topic</h6>
                     <Card.Text>
                       {Object.entries(mainTopicsFilter).map(([key, value]) => {
-                        return <Form.Check key={key} defaultChecked={value} label={key} name={key} onChange={handleMainTopicFilterChange} />;
+                        return <Form.Check id={key} key={key} defaultChecked={value} label={key} name={key} onChange={handleMainTopicFilterChange} />;
                       })}
                     </Card.Text>
                   </Card.Body>
@@ -154,7 +154,7 @@ const Definitions = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm>
+            <Col sm className="p-0">
               {filterSearchObjects().map((obj) => {
                 return (
                   <Card key={obj.id} className="m-1 bg-light border border-dark border-2">
