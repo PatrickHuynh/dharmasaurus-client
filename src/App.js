@@ -13,15 +13,13 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <Container fluid className="p-0 m-0">
-        <Routes>
-          <Route path="/" element={<Definitions />} />
-          <Route exact path="outlines" element={<Outlines />} />
-          <Route exact path="outlines/lrcm" element={<LamRimChenMo />} />
-          <Route exact path="outlines/logic\reasons" element={<LogicReasons />} />
-          <Route path="login" element={<Login />} />
-        </Routes>
-      </Container>
+      <Routes>
+        <Route path="/" element={<Definitions />} />
+        <Route exact path="outlines" element={<Outlines />} />
+        <Route exact path="outlines/lrcm" element={<LamRimChenMo />} />
+        <Route exact path="outlines/logic\reasons" element={<LogicReasons />} />
+        <Route path="login" element={<Login />} />
+      </Routes>
     </BrowserRouter>
   );
 }

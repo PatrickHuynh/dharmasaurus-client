@@ -1,42 +1,47 @@
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import { Container, Row, Col, Stack } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const loc = useLocation();
-  return (
-    <>
-      <Container fluid className="bg-dark">
-        <Row>
-          <Col>
-            <Link className={`m-1 text-light`} style={{ textDecoration: "none" }} to="/">
-              <img src="/stegosaurus.png" height="50" />
-              <b> Dharmasaurus</b>
-            </Link>
-          </Col>
-          <Col md="auto align-self-center">
-            <Link className={`btn ${loc.pathname == "/" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/">
+
+  const navComponents = () => {
+    return (
+      <Row>
+        <Col>
+          <Link className={`m-1 text-light`} style={{ textDecoration: "none" }} to="/">
+            <img src="/dharmasaurus.png" height="50" alt="" />
+            <b> Dharmasaurus</b>
+          </Link>
+        </Col>
+        <Col md="auto align-self-center">
+          <Stack className="m-1" direction="horizontal" gap={2}>
+            <Link className={`btn ${loc.pathname === "/" ? "btn-secondary" : "btn-outline-light border-0"} btn-sm`} to="/">
               Definitions
             </Link>
-            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-secondary" : "btn-outline-light"} m-1`} to="/outlines">
+            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-secondary" : "btn-outline-light border-0"} btn-sm`} to="/outlines">
               Outlines
             </Link>
-            {/* <Link className={`btn ${loc.pathname == "/definitions" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/definitions">
-              Definitions
-            </Link>
-            <Link className={`btn ${loc.pathname == "/about" ? "btn-secondary" : "btn-outline-light"} m-1`} to="/about">
-              About
-            </Link> */}
-            <Link className={`btn btn-outline-primary m-1`} to="/login">
+            <Link className={`btn btn-sm btn-outline-primary`} to="/login">
               Login
             </Link>
-            <span>{"  "}</span>
             <a href="https://discord.gg/gNggmHtV3w" target="blank">
-              <img src="\discord.svg" height="20" />
+              <img className="pb-1" src="\discord.svg" height="20" alt="" />
             </a>
-          </Col>
-        </Row>
+          </Stack>
+        </Col>
+      </Row>
+    );
+  };
+
+  // note the second nav bar without fixed-top, is hidden underneath the first one
+  // this is a sizing hack to allow fixed top and also responsive vertical offset
+  return (
+    <>
+      <Container fluid className="navgradient fixed-top m-0">
+        {navComponents()}
+      </Container>
+      <Container fluid className="navgradient m-0">
+        {navComponents()}
       </Container>
     </>
   );

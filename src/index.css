@@ -12,3 +12,7 @@ code {
 img {
   pointer-events: none;
 }
+
+.navgradient {
+  background-image: linear-gradient(to right, rgb(30, 0, 30), black, rgb(30, 0, 30));
+}

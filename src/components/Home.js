@@ -1,9 +1,9 @@
 import { Col, Container, Row } from "react-bootstrap";
 const Home = () => {
   return (
-    <Container className="mt-4">
+    <Container fluid className="m-0 p-0">
       <Row>
-        <Col>This is an application written to support Dharma practitioners studying and practiting the Dharma. This is under development.</Col>
+        <Col></Col>
       </Row>
     </Container>
   );

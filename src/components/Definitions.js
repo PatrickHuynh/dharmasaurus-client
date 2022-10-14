@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
+import { useState, useEffect, useRef } from "react";
+import { Container, Row, Col, Button, Spinner, Stack, Offcanvas, Table } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Card from "react-bootstrap/Card";
 import stringSimilarity from "string-similarity";
+import { CSVLink, CSVDownload } from "react-csv";
 
 const Definitions = () => {
   const [objects, setObjects] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loadingObjects, setLoadingObjects] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
+  const [mainTopicsFilter, setMainTopicsFilter] = useState({});
+  const definitionsExportRef = useRef();
 
   useEffect(() => {
     const getObjects = async () => {
@@ -16,6 +20,9 @@ const Definitions = () => {
       objectsFromServer.sort((a, b) => (a.name > b.name ? 1 : -1));
       setLoadingObjects(false);
       setObjects(objectsFromServer);
+      let mainTopicsSet = new Set(objectsFromServer.map((obj) => obj.mainTopic));
+      mainTopicsSet = [...mainTopicsSet].reduce((arr, curr) => ((arr[curr] = false), arr), {});
+      setMainTopicsFilter(mainTopicsSet);
     };
     getObjects();
   }, []);
@@ -26,27 +33,55 @@ const Definitions = () => {
     return data;
   };
 
+  // button handlers
   const handleChangeSearch = (e) => {
     setSearchText(e.target.value);
   };
 
+  const toggleShowFilter = () => setShowFilter((s) => !s);
+  const handleCloseFilter = () => setShowFilter(false);
+
+  const handleDefinitionsDownloadCSV = () => {
+    definitionsExportRef.current.link.click();
+  };
+
+  const handleMainTopicFilterChange = (e) => {
+    setMainTopicsFilter({ ...mainTopicsFilter, [e.target.name]: e.target.checked });
+  };
+
+  // main filter function
   const filterSearchObjects = () => {
+    let searchTextLower = searchText.toLowerCase();
+
     let filteredObjects = objects.map((obj) => {
       let name = obj.name.toLowerCase();
       let definition = obj.definition.toLowerCase();
-      let searchTextLower = searchText.toLowerCase();
-      let score = Math.max(stringSimilarity.compareTwoStrings(name, searchTextLower), stringSimilarity.compareTwoStrings(definition, searchTextLower) * 0.8);
-      return { ...obj, score: score };
+      let nameDef = name + " " + definition;
+      let score = Math.max(stringSimilarity.compareTwoStrings(name, searchTextLower), stringSimilarity.compareTwoStrings(definition, searchTextLower));
+      return { ...obj, nameDef: nameDef, score: score };
     });
-    filteredObjects.filter((obj) => {
-      if (searchText == "") return true;
-      if (obj.score >= 0.25) return true;
-      return false;
-    });
-    filteredObjects.sort((a, b) => b.score - a.score);
+
+    // filter by main topic checkboxes
+    // if no filter is selected, then do not filter anything (counterintuitive logic, but how UIs work)
+    if (Object.entries(mainTopicsFilter).some(([topic, filterValue]) => filterValue)) {
+      // loop through and only select defs where main topic is true
+      filteredObjects = filteredObjects.filter((obj) => {
+        return mainTopicsFilter[obj.mainTopic];
+      });
+    }
+
+    // if the search string is empty, just return the whole dictionary
+    if (searchTextLower.length === 0) return filteredObjects;
+
+    // next filter the search list by names and definitions containing all of the key words
+    let keywords = searchTextLower.split(" ");
     filteredObjects = filteredObjects.filter((obj) => {
-      return searchText == "" || obj.score > 0.25;
+      return keywords.every((word) => {
+        return obj.nameDef.includes(word);
+      });
     });
+
+    filteredObjects.sort((a, b) => b.score - a.score);
     return filteredObjects;
   };
 
@@ -55,26 +90,85 @@ const Definitions = () => {
     return val;
   };
 
+  const definitionsDataCSV = () => {
+    let defsArray = [["name", "definition", "mainTopic", "source"]];
+    objects.map((obj) => {
+      defsArray.push([obj.name, obj.definition, obj.mainTopic, obj.source]);
+    });
+    return defsArray;
+  };
+
+  const loadingSpinner = (loadingMessage) => {
+    return (
+      <Stack direction="horizontal" gap={2} className="d-flex align-items-center p-2">
+        <Spinner className="m-2" animation="border" role="status"></Spinner>
+        <h6>{loadingMessage}</h6>
+      </Stack>
+    );
+  };
+
   return (
     <Container fluid className="m-0 p-0">
-      <Container fluid className="m-0 p-0">
-        <InputGroup size="sm" className="p-3 bg-secondary">
-          <Form.Control placeholder="Search" aria-label="Search" onChange={handleChangeSearch} />
-        </InputGroup>
-      </Container>
-      {loadingObjects && <p className="p-3">Loading...</p>}
-      {!loadingObjects &&
-        objects.length > 0 &&
-        filterSearchObjects().map((obj) => {
-          return (
-            <Card key={obj.id} className="m-1 bg-light border border-dark border-2">
-              <Card.Body>
-                <Card.Title>{obj.name + " (" + showPercentage(obj.score) + "%)"}</Card.Title>
-                <Card.Text>{obj.definition}</Card.Text>
-              </Card.Body>
-            </Card>
-          );
-        })}
+      {loadingObjects && loadingSpinner("Loading definitions from database...")}
+      {!loadingObjects && (
+        <>
+          <Offcanvas show={showFilter} onHide={handleCloseFilter} backdrop={false} scroll={true} placement="end">
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title>Search Settings</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              <Stack direction="vertical" gap={3}>
+                <Card className="m-1 border border-dark border-2">
+                  <Card.Body>
+                    <h6>Filter Main Topic</h6>
+                    <Card.Text>
+                      {Object.entries(mainTopicsFilter).map(([key, value]) => {
+                        return <Form.Check key={key} defaultChecked={value} label={key} name={key} onChange={handleMainTopicFilterChange} />;
+                      })}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+                <Button size="sm" variant="primary" onClick={toggleShowFilter}>
+                  Apply Settings
+                </Button>
+                <Button size="sm" variant="success" onClick={handleDefinitionsDownloadCSV}>
+                  Download all definitions
+                </Button>
+              </Stack>
+            </Offcanvas.Body>
+            <CSVLink data={definitionsDataCSV()} filename="Definitions.csv" className="hidden" ref={definitionsExportRef} target="_blank" />
+          </Offcanvas>
+
+          <Row>
+            <Col className="bg-secondary">
+              <div className="m-1">
+                <Stack direction="horizontal" className="p-1">
+                  <InputGroup size="sm" className="mx-2">
+                    <Form.Control placeholder="Search" aria-label="Search" onChange={handleChangeSearch} />
+                  </InputGroup>
+                  <Button size="sm" variant="dark" onClick={toggleShowFilter}>
+                    Settings
+                  </Button>
+                </Stack>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm>
+              {filterSearchObjects().map((obj) => {
+                return (
+                  <Card key={obj.id} className="m-1 bg-light border border-dark border-2">
+                    <Card.Body>
+                      <Card.Title>{obj.name + " (" + showPercentage(obj.score) + "%)"}</Card.Title>
+                      <Card.Text>{obj.definition}</Card.Text>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+            </Col>
+          </Row>
+        </>
+      )}
     </Container>
   );
 };
