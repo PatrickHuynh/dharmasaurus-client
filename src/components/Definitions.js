@@ -94,6 +94,7 @@ const Definitions = () => {
     let defsArray = [["name", "definition", "mainTopic", "source"]];
     objects.map((obj) => {
       defsArray.push([obj.name, obj.definition, obj.mainTopic, obj.source]);
+      return true;
     });
     return defsArray;
   };

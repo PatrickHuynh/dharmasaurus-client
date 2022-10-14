@@ -6,7 +6,7 @@ const LamRimChenMo = () => {
   const [modalShow, setModalShow] = useState(true);
   return (
     <Container fluid>
-      {modalShow ? (
+      {modalShow && (
         <Modal show={modalShow} onHide={() => setModalShow(false)} aria-labelledby="contained-modal-title-vcenter" centered>
           <Modal.Header closeButton>
             <Modal.Title id="contained-modal-title-vcenter">Outline Navigation Tip</Modal.Title>
@@ -18,13 +18,12 @@ const LamRimChenMo = () => {
             <Button onClick={() => setModalShow(false)}>Close</Button>
           </Modal.Footer>
         </Modal>
-      ) : (
-        <Row>
-          <Col>
-            <img src="https://raw.githubusercontent.com/PatrickHuynh/dharma-outlines/main/logic/logic%20-%20reasons.svg" />
-          </Col>
-        </Row>
       )}
+      <Row>
+        <Col>
+          <img src="https://raw.githubusercontent.com/PatrickHuynh/dharma-outlines/main/logic/logic%20-%20reasons.svg" hidden={modalShow} />
+        </Col>
+      </Row>
     </Container>
   );
 };
