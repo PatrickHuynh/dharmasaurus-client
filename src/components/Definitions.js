@@ -91,9 +91,9 @@ const Definitions = () => {
   };
 
   const definitionsDataCSV = () => {
-    let defsArray = [["name", "definition", "mainTopic", "source"]];
+    let defsArray = [["name", "definition"]];
     objects.map((obj) => {
-      defsArray.push([obj.name, obj.definition, obj.mainTopic, obj.source]);
+      defsArray.push([obj.name, obj.definition]);
       return true;
     });
     return defsArray;
