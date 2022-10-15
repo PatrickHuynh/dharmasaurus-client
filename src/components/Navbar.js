@@ -21,8 +21,8 @@ const Navbar = () => {
             <Link className={`btn ${loc.pathname.startsWith("/definitions") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/definitions">
               Definitions
             </Link>
-            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/outlines">
-              Outlines
+            <Link className={`btn ${loc.pathname.startsWith("/maps") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/maps">
+              Maps
             </Link>
             <Link className={`btn btn-sm btn-outline-primary`} to="/login">
               Login
