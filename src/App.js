@@ -14,7 +14,8 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Definitions />} />
+        <Route path="/" element={<Home />} />
+        <Route exact path="definitions" element={<Definitions />} />
         <Route exact path="outlines" element={<Outlines />} />
         <Route exact path="outlines/lrcm" element={<LamRimChenMo />} />
         <Route exact path="outlines/logic\reasons" element={<LogicReasons />} />

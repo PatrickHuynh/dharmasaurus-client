@@ -9,16 +9,19 @@ const Navbar = () => {
       <Row>
         <Col>
           <Link className={`m-1 text-light`} style={{ textDecoration: "none" }} to="/">
-            <img src="/dharmasaurus.png" height="50" alt="" />
+            <img src="/dharmasaurus.png" height="50" alt="" className="p-1" />
             <b> Dharmasaurus</b>
           </Link>
         </Col>
         <Col md="auto align-self-center">
           <Stack className="m-1" direction="horizontal" gap={2}>
-            <Link className={`btn ${loc.pathname === "/" ? "btn-secondary" : "btn-outline-light border-0"} btn-sm`} to="/">
+            <Link className={`btn ${loc.pathname === "/" ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/">
+              Home
+            </Link>
+            <Link className={`btn ${loc.pathname.startsWith("/definitions") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/definitions">
               Definitions
             </Link>
-            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-secondary" : "btn-outline-light border-0"} btn-sm`} to="/outlines">
+            <Link className={`btn ${loc.pathname.startsWith("/outlines") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/outlines">
               Outlines
             </Link>
             <Link className={`btn btn-sm btn-outline-primary`} to="/login">
