@@ -28,7 +28,7 @@ const Navbar = () => {
               Login
             </Link>
             <a href="https://discord.gg/gNggmHtV3w" target="blank">
-              <img className="pb-1" src="\discord.svg" height="20" alt="" />
+              <img className="pb-1" src="\discord.svg" height="20" alt="" hidden="hidden" />
             </a>
           </Stack>
         </Col>
