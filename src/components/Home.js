@@ -25,9 +25,9 @@ const Home = () => {
           </Card>
           <Card className="mx-3 bg-secondary" style={{ width: "18rem" }}>
             <Card.Body className="text-center text-white">
-              <Card.Title>Outlines</Card.Title>
-              <Card.Text>Outlines for various subjects</Card.Text>
-              <LinkContainer to="outlines" style={{ textDecoration: "none" }}>
+              <Card.Title>Maps</Card.Title>
+              <Card.Text>Maps for various subjects</Card.Text>
+              <LinkContainer to="maps" style={{ textDecoration: "none" }}>
                 <Button variant="warning">{"Go »"}</Button>
               </LinkContainer>
             </Card.Body>
