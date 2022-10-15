@@ -21,7 +21,10 @@ const Definitions = () => {
       setLoadingObjects(false);
       setObjects(objectsFromServer);
       let mainTopicsSet = new Set(objectsFromServer.map((obj) => obj.mainTopic));
+      mainTopicsSet = [...mainTopicsSet];
+      mainTopicsSet = mainTopicsSet.sort((a, b) => a.localeCompare(b));
       mainTopicsSet = [...mainTopicsSet].reduce((arr, curr) => ((arr[curr] = false), arr), {});
+
       setMainTopicsFilter(mainTopicsSet);
     };
     getObjects();
@@ -132,9 +135,9 @@ const Definitions = () => {
                 <Button size="sm" variant="primary" onClick={toggleShowFilter}>
                   Apply Settings
                 </Button>
-                <Button size="sm" variant="success" onClick={handleDefinitionsDownloadCSV}>
+                {/* <Button size="sm" variant="success" onClick={handleDefinitionsDownloadCSV}>
                   Download all definitions
-                </Button>
+                </Button> */}
               </Stack>
             </Offcanvas.Body>
             <CSVLink data={definitionsDataCSV()} filename="Definitions.csv" className="hidden" ref={definitionsExportRef} target="_blank" />
