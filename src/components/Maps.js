@@ -25,9 +25,9 @@ const Maps = () => {
   };
 
   const handleSelectMap = async (key) => {
+    setShowMenu(!showMenu);
     await fetchMap();
     setCurrentMap({ ...mapPaths[key], key: key });
-    setShowMenu(!showMenu);
   };
 
   const handleCloseMenu = () => setShowMenu(false);
