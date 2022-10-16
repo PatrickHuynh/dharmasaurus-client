@@ -11,12 +11,17 @@ const Maps = () => {
     fetchMap();
   }, []);
 
-  const repositoryUrl = "https://raw.githubusercontent.com/PatrickHuynh/dharmasaurus-data/e27a4c64b702a9cf2cd6e12820d60b2ccda3c85d/maps/";
+  const repositoryUrl = "https://raw.githubusercontent.com/PatrickHuynh/dharmasaurus-data/main/maps/";
 
   const mapPaths = {
     mmf: { text: "Mind and Mental Factors", url: "mmf.svg", parent: false, key: "mmf" },
     mmf_minds: { text: "Minds", url: "mmf_minds.svg", parent: "mmf", key: "mmf_minds" },
     mmf_5omnipresent: { text: "Five Omnipresent", url: "mmf_5omnipresent.svg", parent: "mmf", key: "mmf_5omnipresent" },
+    mmf_5objasc: { text: "Five Object Ascertaining", url: "mmf_5objasc.svg", parent: "mmf", key: "mmf_5objasc" },
+    mmf_11virtuous: { text: "Eleven Virtuous", url: "mmf_11virtuous.svg", parent: "mmf", key: "mmf_11virtuous" },
+    mmf_6rootaff: { text: "Six Root Afflictions", url: "mmf_6rootaff.svg", parent: "mmf", key: "mmf_6rootaff" },
+    mmf_20secaff: { text: "Twenty Secondary Afflictions", url: "mmf_20secaff.svg", parent: "mmf", key: "mmf_20secaff" },
+    mmf_4changeable: { text: "Four Changeable", url: "mmf_4changeable.svg", parent: "mmf", key: "mmf_4changeable" },
   };
 
   const fetchMap = async () => {
