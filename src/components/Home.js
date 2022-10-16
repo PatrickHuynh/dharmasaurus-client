@@ -7,9 +7,12 @@ const Home = () => {
       <Row style={{ backgroundImage: "url('/space_rainbow_background.jpg')", backgroundSize: "cover" }}>
         <Col className="text-center">
           <img src="./dharmasaurus.png" style={{ maxWidth: "90%" }} />
-          <h1 className="pb-3 fw-bold text-dark" style={{ textShadow: "1px 0 0 #fff, 0 -1px 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff" }}>
-            Dharmasaurus welcomes you!
-          </h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col className="p-3 text-center">
+          <h1 className="fw-bold text-white">Dharmasaurus welcomes you!</h1>
+          <p className="text-white">Dharmasaurus collects notes on the dharma. Dharmasaurus hopes these references are of benefit but also cautions that they are at best personal notes of the Dharmasaur.</p>
         </Col>
       </Row>
       <Row className="p-4">
