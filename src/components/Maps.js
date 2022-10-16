@@ -22,17 +22,19 @@ const Maps = () => {
     mmf_6rootaff: { text: "Six Root Afflictions", url: "mmf_6rootaff.svg", parent: "mmf", key: "mmf_6rootaff" },
     mmf_20secaff: { text: "Twenty Secondary Afflictions", url: "mmf_20secaff.svg", parent: "mmf", key: "mmf_20secaff" },
     mmf_4changeable: { text: "Four Changeable", url: "mmf_4changeable.svg", parent: "mmf", key: "mmf_4changeable" },
+    lrcm: { text: "Lam Rim Chen Mo", url: "lrcm.svg", parent: false, key: "lrcm" },
+    reasons: { text: "Reasons and Logic", url: "reasons.svg", parent: false, key: "reasons" },
   };
 
   const fetchMap = async () => {
-    setMapLoading(true);
     const res = await fetch(repositoryUrl + currentMap.url);
-    setMapLoading(false);
   };
 
   const handleSelectMap = async (key) => {
+    setMapLoading(true);
     setShowMenu(false);
     await fetchMap();
+    setMapLoading(false);
     setCurrentMap({ ...mapPaths[key], key: key });
   };
 
