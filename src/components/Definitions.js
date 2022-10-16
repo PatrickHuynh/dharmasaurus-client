@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Button, Spinner, Stack, Offcanvas, Table } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Card from "react-bootstrap/Card";
+import { Container, Row, Col, Button, Spinner, Stack, Offcanvas, Form, InputGroup, Card } from "react-bootstrap";
 import stringSimilarity from "string-similarity";
 import { CSVLink, CSVDownload } from "react-csv";
 
