@@ -6,8 +6,7 @@ import Home from "./components/Home";
 import Definitions from "./components/Definitions";
 import Login from "./components/Login";
 import Maps from "./components/Maps";
-import LamRimChenMo from "./components/maps/lrcm/LamRimChenMo";
-import LogicReasons from "./components/maps/logic/LogicReasons";
+import Pics from "./components/Pics";
 
 function App() {
   return (
@@ -17,8 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route exact path="definitions" element={<Definitions />} />
         <Route exact path="maps" element={<Maps />} />
-        <Route exact path="maps/lrcm" element={<LamRimChenMo />} />
-        <Route exact path="maps/logic\reasons" element={<LogicReasons />} />
+        <Route exact path="pics" element={<Pics />} />
         <Route path="login" element={<Login />} />
       </Routes>
     </BrowserRouter>
