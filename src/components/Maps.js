@@ -1,5 +1,6 @@
 import { Container, Row, Col, Button, Card, Spinner, Stack, Collapse, ListGroup, Offcanvas } from "react-bootstrap";
 import { useState, useEffect, useRef } from "react";
+import { LinkContainer } from "react-router-bootstrap";
 
 const Maps = () => {
   const [showMenu, setShowMenu] = useState(true);
@@ -13,9 +14,9 @@ const Maps = () => {
   const repositoryUrl = "https://raw.githubusercontent.com/PatrickHuynh/dharmasaurus-data/e27a4c64b702a9cf2cd6e12820d60b2ccda3c85d/maps/";
 
   const mapPaths = {
-    mmf: { text: "Mind and Mental Factors", url: "mmf.svg", parent: false },
-    mmf_minds: { text: "Minds", url: "mmf_minds.svg", parent: "mmf" },
-    mmf_5omnipresent: { text: "Five Omnipresent", url: "mmf_5omnipresent.svg", parent: "mmf" },
+    mmf: { text: "Mind and Mental Factors", url: "mmf.svg", parent: false, key: "mmf" },
+    mmf_minds: { text: "Minds", url: "mmf_minds.svg", parent: "mmf", key: "mmf_minds" },
+    mmf_5omnipresent: { text: "Five Omnipresent", url: "mmf_5omnipresent.svg", parent: "mmf", key: "mmf_5omnipresent" },
   };
 
   const fetchMap = async () => {
@@ -25,7 +26,7 @@ const Maps = () => {
   };
 
   const handleSelectMap = async (key) => {
-    setShowMenu(!showMenu);
+    setShowMenu(false);
     await fetchMap();
     setCurrentMap({ ...mapPaths[key], key: key });
   };
@@ -42,13 +43,30 @@ const Maps = () => {
   };
 
   const crumbsList = () => {
-    let crumbs = "";
+    let crumbs = [];
     let el = currentMap;
     do {
-      crumbs = el.text + (crumbs ? " / " + crumbs : "");
+      const frag = (map) => {
+        return (
+          <>
+            {map.parent && " | "}
+            <div key={map.key} className={`d-inline btn btn-sm ${map.key === currentMap.key ? "btn-dark" : "btn-outline-dark"}`} onClick={() => handleSelectMap(map.key)}>
+              {map.text}
+            </div>
+          </>
+        );
+      };
+
+      crumbs = [frag(el), ...crumbs];
       el = mapPaths[el.parent];
     } while (el);
-    return crumbs;
+    return (
+      <>
+        {crumbs.map((map) => {
+          return map;
+        })}
+      </>
+    );
   };
 
   return (
@@ -77,12 +95,14 @@ const Maps = () => {
         </Offcanvas.Body>
       </Offcanvas>
 
-      <Row className="pt-2 bg-light">
-        <Col>
+      <Row className="p-2 bg-light flex-nowrap" style={{ maxHeight: "40px" }}>
+        <Col xs="auto">
           <Button size="sm" onClick={() => setShowMenu(!showMenu)} aria-controls="collapse-map-menu" aria-expanded={showMenu}>
             Show Menu
           </Button>{" "}
-          <b>{crumbsList()}</b>
+        </Col>
+        <Col>
+          <div className="ps-2 d-inline text-nowrap overflow-hidden align-middle">{crumbsList()}</div>
         </Col>
       </Row>
       <Row>
