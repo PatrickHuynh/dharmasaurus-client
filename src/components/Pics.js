@@ -48,7 +48,7 @@ const Maps = () => {
     <Container fluid className="m-0">
       <Offcanvas show={showMenu} onHide={handleCloseMenu} backdrop={true} scroll={true} placement="start">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Select Map</Offcanvas.Title>
+          <Offcanvas.Title>Select Image</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ListGroup>
