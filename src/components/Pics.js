@@ -41,11 +41,11 @@ const Maps = () => {
   };
 
   const crumbsList = () => {
-    return <div className={`d-inline text-white`}>{currentMap.text}</div>;
+    return <h6 className={`d-inline text-white`}>{currentMap.text}</h6>;
   };
 
   return (
-    <Container fluid className="m-0">
+    <Container fluid className="m-0 bg-dark">
       <Offcanvas show={showMenu} onHide={handleCloseMenu} backdrop={true} scroll={true} placement="start">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Select Image</Offcanvas.Title>
@@ -70,12 +70,12 @@ const Maps = () => {
             Show Menu
           </Button>{" "}
         </Col>
-        <Col>
+        <Col className="text-center">
           <div className="ps-2 d-inline text-nowrap overflow-hidden align-middle">{crumbsList()}</div>
         </Col>
       </Row>
       <Row className="p-2 bg-dark text-center">
-        <Col>{mapLoading ? loadingSpinner("Image loading...") : <img src={repositoryUrl + currentMap.url} />}</Col>
+        <Col>{mapLoading ? loadingSpinner("Image loading...") : <img className="img-fluid" src={repositoryUrl + currentMap.url} />}</Col>
       </Row>
     </Container>
   );

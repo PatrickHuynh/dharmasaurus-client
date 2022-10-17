@@ -117,7 +117,7 @@ const Maps = () => {
         </Offcanvas.Body>
       </Offcanvas>
 
-      <Row className="p-2 bg-light flex-nowrap" style={{ maxHeight: "40px" }}>
+      <Row className="p-2 flex-nowrap" style={{ maxHeight: "40px" }}>
         <Col xs="auto">
           <Button size="sm" onClick={() => setShowMenu(!showMenu)} aria-controls="collapse-map-menu" aria-expanded={showMenu}>
             Show Menu
