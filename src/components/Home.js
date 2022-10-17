@@ -12,7 +12,7 @@ const Home = () => {
       <Row>
         <Col className="p-3 text-center">
           <h1 className="fw-bold text-white">Dharmasaurus welcomes you!</h1>
-          <p className="text-white">Dharmasaurus collects notes on the dharma. These references may be of benefit, but take caution that they are at best just notes of the Dharmasaur.</p>
+          <p className="text-white">Dharmasaurus collects notes on the dharma. Refer to original sources where required though, as these are just abbreviated notes of the Dharmasaur.</p>
         </Col>
       </Row>
       <Container>
