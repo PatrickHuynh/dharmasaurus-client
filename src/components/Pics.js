@@ -74,7 +74,7 @@ const Maps = () => {
           <div className="ps-2 d-inline text-nowrap overflow-hidden align-middle">{crumbsList()}</div>
         </Col>
       </Row>
-      <Row className="p-2 bg-dark text-center">
+      <Row className="p-2 bg-dark text-center" style={{ minHeight: "95vh" }}>
         <Col>{mapLoading ? loadingSpinner("Image loading...") : <img className="img-fluid" src={repositoryUrl + currentMap.url} />}</Col>
       </Row>
     </Container>

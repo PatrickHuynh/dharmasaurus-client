@@ -49,7 +49,7 @@ const Maps = () => {
 
   const loadingSpinner = (loadingMessage) => {
     return (
-      <Stack direction="horizontal" gap={2} className="d-flex align-items-center p-2 btn btn-light">
+      <Stack direction="horizontal" gap={2} className="d-flex align-items-center p-2">
         <Spinner className="m-2" animation="border" role="status"></Spinner>
         <h6>{loadingMessage}</h6>
       </Stack>

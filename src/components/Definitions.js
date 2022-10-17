@@ -159,8 +159,8 @@ const Definitions = () => {
               {filterSearchObjects().map((obj) => {
                 return (
                   <Card key={obj.id} className="m-1 bg-light border border-dark border-2">
-                    <Card.Body>
-                      <Card.Title>{obj.name + " (" + showPercentage(obj.score) + "%)"}</Card.Title>
+                    <Card.Body className="px-3 py-2">
+                      <Card.Title style={{ fontSize: "16px" }}>{obj.name + " (" + showPercentage(obj.score) + "%)"}</Card.Title>
                       <Card.Text>{obj.definition}</Card.Text>
                     </Card.Body>
                   </Card>
