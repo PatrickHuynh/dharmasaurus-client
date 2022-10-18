@@ -1,5 +1,8 @@
+import { useContext } from "react";
 import { Container, Row, Col, Stack } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
+import { UserContext } from "../utils/UserContext";
+import LoginButton from "./LoginButton";
 
 const Navbar = () => {
   const loc = useLocation();
@@ -27,9 +30,7 @@ const Navbar = () => {
             <Link className={`btn ${loc.pathname.startsWith("/pics") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/pics">
               Pics
             </Link>
-            <Link className={`btn btn-sm btn-outline-primary`} to="/login">
-              Login
-            </Link>
+            <LoginButton />
             <a href="https://discord.gg/gNggmHtV3w" target="blank">
               <img className="pb-1" src="\discord.svg" height="20" alt="" hidden="hidden" />
             </a>

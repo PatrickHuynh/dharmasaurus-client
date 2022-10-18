@@ -2,7 +2,7 @@ import { Container, Row, Col, Button, Card, Spinner, Stack, Collapse, ListGroup,
 import { useState, useEffect, useRef } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 
-const Maps = () => {
+const Pics = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [mapLoading, setMapLoading] = useState(true);
   const [currentMap, setCurrentMap] = useState({ text: "Chittamani Tara", url: "chittamani_tara.jpg", key: "chittamani_tara" });
@@ -81,4 +81,4 @@ const Maps = () => {
   );
 };
 
-export default Maps;
+export default Pics;
