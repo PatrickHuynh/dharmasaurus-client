@@ -65,13 +65,10 @@ const Pics = () => {
       </Offcanvas>
 
       <Row className="p-2 bg-dark flex-nowrap" style={{ maxHeight: "40px" }}>
-        <Col xs="auto">
-          <Button size="sm" onClick={() => setShowMenu(!showMenu)} aria-controls="collapse-map-menu" aria-expanded={showMenu}>
-            Show Menu
-          </Button>{" "}
-        </Col>
         <Col className="text-center">
-          <div className="ps-2 d-inline text-nowrap overflow-hidden align-middle">{crumbsList()}</div>
+          <Button size="sm" onClick={() => setShowMenu(!showMenu)} aria-controls="collapse-map-menu" aria-expanded={showMenu}>
+            {crumbsList()}
+          </Button>{" "}
         </Col>
       </Row>
       <Row className="p-2 bg-dark text-center" style={{ minHeight: "95vh" }}>
