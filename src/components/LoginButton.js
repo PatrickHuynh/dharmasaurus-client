@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, query, getDocs, collection, where, updateDoc, doc, setDoc, addDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { useEffect, useContext } from "react";
-import { UserContext } from "../utils/UserContext";
+import { UserContext } from "../utils/Contexts";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,

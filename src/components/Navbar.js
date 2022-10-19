@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { Container, Row, Col, Stack } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import { UserContext } from "../utils/UserContext";
 import LoginButton from "./LoginButton";
 
 const Navbar = () => {

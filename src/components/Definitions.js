@@ -1,10 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Container, Row, Col, Button, Spinner, Stack, Offcanvas, Form, InputGroup, Card } from "react-bootstrap";
 import stringSimilarity from "string-similarity";
 import { CSVLink, CSVDownload } from "react-csv";
+import { ObjectsContext } from "../utils/Contexts";
 
 const Definitions = () => {
-  const [objects, setObjects] = useState([]);
+  //const [objects, setObjects] = useState([]);
+  const { objects, setObjects } = useContext(ObjectsContext);
+
   const [searchText, setSearchText] = useState("");
   const [loadingObjects, setLoadingObjects] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
@@ -13,15 +16,21 @@ const Definitions = () => {
 
   useEffect(() => {
     const getObjects = async () => {
+      let objectsFromLocalStorage = localStorage.getItem("objects");
+      if (objectsFromLocalStorage) {
+        objectsFromLocalStorage = JSON.parse(objectsFromLocalStorage);
+        setObjects(objectsFromLocalStorage);
+        setLoadingObjects(false);
+      }
       let objectsFromServer = await fetchObjects();
       objectsFromServer.sort((a, b) => (a.name > b.name ? 1 : -1));
       setLoadingObjects(false);
       setObjects(objectsFromServer);
+      localStorage.setItem("objects", JSON.stringify(objectsFromServer));
       let mainTopicsSet = new Set(objectsFromServer.map((obj) => obj.mainTopic));
       mainTopicsSet = [...mainTopicsSet];
       mainTopicsSet = mainTopicsSet.sort((a, b) => a.localeCompare(b));
       mainTopicsSet = [...mainTopicsSet].reduce((arr, curr) => ((arr[curr] = false), arr), {});
-
       setMainTopicsFilter(mainTopicsSet);
     };
     getObjects();
