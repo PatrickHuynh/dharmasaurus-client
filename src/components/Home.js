@@ -13,7 +13,7 @@ const Home = () => {
         <Col xs={1} md={3}></Col>
         <Col xs md={6} className="p-3 text-center">
           <h1 className="mb-3 fw-bold text-success">Dharmasaurus ❤️ welcomes you!</h1>
-          <p className="text-white">Dharmasaurus is a kind of grass eating animal, spawned from the heat of the fire from the sword of Manjushri and moisture from the tear of Tara. As it forages, notes of the dharma precipitate from the air of the mandala to settle on its scales, resonating musical tones and radiating rainbow light. </p>
+          <p className="text-white">Dharmasaurus is a kind of grass eating animal, spawned from the heat of the flames on the sword of Manjushri and moisture from the tear of Tara. As it forages, notes of the dharma precipitate from the air of the mandala to settle on its scales, resonating musical tones and radiating rainbow light. </p>
           <p className="text-white">But the Dharmasaur is made up and is entirely fictional - time to wake up from the dream!</p>
           <p className="text-white">Refer to original sources where required though, as these are just abbreviated notes of the Dharmasaur and may contain errors.</p>
         </Col>
