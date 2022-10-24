@@ -20,6 +20,9 @@ const Navbar = () => {
             <Link className={`btn ${loc.pathname === "/" ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/">
               Home
             </Link>
+            <Link className={`btn ${loc.pathname.startsWith("/dojo") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/dojo/definitions">
+              Dojo
+            </Link>
             <Link className={`btn ${loc.pathname.startsWith("/definitions") ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/definitions">
               Definitions
             </Link>

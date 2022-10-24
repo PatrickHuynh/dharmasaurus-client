@@ -21,3 +21,12 @@ img {
 .navgradient {
   background-image: linear-gradient(to right, rgb(30, 0, 30), black, rgb(30, 0, 30));
 }
+
+.ul-memorised {
+  list-style: none;
+}
+
+.ul-memorised li:before {
+  content: "\2705\00A0";
+  margin-left: -1em;
+}

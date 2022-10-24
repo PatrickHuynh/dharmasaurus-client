@@ -90,7 +90,8 @@ const Definitions = () => {
       });
     });
 
-    filteredObjects.sort((a, b) => b.score - a.score);
+    filteredObjects = filteredObjects.sort((a, b) => b.score - a.score);
+    filteredObjects = filteredObjects.sort((a, b) => b.mainTopic - a.mainTopic);
     return filteredObjects;
   };
 
