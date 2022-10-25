@@ -225,7 +225,7 @@ const DojoDefinitions = () => {
                 <Container fluid className="py-5">
                   <Row>
                     <Col className="d-flex justify-content-center">
-                      <h1>{practiceStack[0].name}</h1>
+                      <h2>{practiceStack[0].name}</h2>
                     </Col>
                   </Row>
                   <Row className="my-5">
@@ -239,25 +239,27 @@ const DojoDefinitions = () => {
                       )}
                     </Col>
                   </Row>
-                  <Row className="mt-5">
-                    <Col className="d-flex justify-content-center">
-                      {revealDefinition ? (
-                        <Stack direction="horizontal" gap={1}>
-                          <Button variant="danger" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(0)}>
-                            Forgot
-                          </Button>
-                          <Button variant="warning" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(1)}>
-                            Hard
-                          </Button>
-                          <Button variant="success" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(2)}>
-                            Easy
-                          </Button>
-                        </Stack>
-                      ) : (
-                        <></>
-                      )}
-                    </Col>
-                  </Row>
+                  {revealDefinition ? (
+                    <>
+                      <Row className="">
+                        <Col className="d-flex justify-content-center">
+                          <Stack direction="horizontal" gap={1}>
+                            <Button variant="danger" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(0)}>
+                              Forgot
+                            </Button>
+                            <Button variant="warning" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(1)}>
+                              Hard
+                            </Button>
+                            <Button variant="success" style={{ minWidth: "100px" }} onClick={() => handleDefinitionRecall(2)}>
+                              Easy
+                            </Button>
+                          </Stack>
+                        </Col>
+                      </Row>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Container>
               </Col>
             ) : (
@@ -277,7 +279,7 @@ const DojoDefinitions = () => {
                   <Row xs={1} sm={practiceStack.length > 0 ? 2 : 1} className="d-flex justify-content-center">
                     {practiceStack.length > 0 && (
                       <Col>
-                        <h1>Definitions to recall</h1>
+                        <h2>Definitions to recall</h2>
                         <ol>
                           {practiceStack.map((x) => {
                             return <li key={"ps_" + x.id}>{x.name}</li>;
@@ -286,7 +288,7 @@ const DojoDefinitions = () => {
                       </Col>
                     )}
                     <Col>
-                      <h1>Memorised definitions</h1>
+                      <h2>Memorised definitions</h2>
                       <ul className="ul-memorised">
                         {memorisedStack.map((x) => {
                           return <li key={"ms_" + x.id}>{x.name}</li>;
