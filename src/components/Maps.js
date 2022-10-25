@@ -1,10 +1,11 @@
 import { Container, Row, Col, Button, Card, Spinner, Stack, Collapse, ListGroup, Offcanvas, Dropdown } from "react-bootstrap";
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 
 const Maps = () => {
   const [showMenu, setShowMenu] = useState(true);
   const [mapLoading, setMapLoading] = useState(true);
-  const [currentMap, setCurrentMap] = useState({ text: "Mind and Mental Factors", url: "mmf.svg", parent: "mmf", key: "mmf" });
+  const [currentMap, setCurrentMap] = useState({ text: "Mind", url: "mmf_minds.svg", parent: "mmf", key: "mmf_minds" });
   const [mapNavStructure, setMapNavStructure] = useState({ headers: [], maps: [] });
 
   useEffect(() => {
@@ -90,9 +91,12 @@ const Maps = () => {
     <Container fluid className="m-0">
       <Offcanvas show={showMenu} onHide={handleCloseMenu} backdrop={true} scroll={true} placement="start">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Select Map</Offcanvas.Title>
+          <Offcanvas.Title className="text-center">
+            <img className="text-center" src="./dharma_wheel.svg" style={{ maxWidth: "30%" }} />
+          </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
+          {mapNavStructure.headers.length == 0 && loadingSpinner()}
           {mapNavStructure["headers"].map((headerKey) => {
             return (
               <Dropdown className="list-group" autoClose="outside">
@@ -121,7 +125,7 @@ const Maps = () => {
         <Col xs="auto">
           <Button size="sm" onClick={() => setShowMenu(!showMenu)} aria-controls="collapse-map-menu" aria-expanded={showMenu}>
             Show Menu
-          </Button>{" "}
+          </Button>
         </Col>
         <Col>
           <div className="ps-2 d-inline text-nowrap overflow-hidden align-middle">{crumbsList()}</div>
