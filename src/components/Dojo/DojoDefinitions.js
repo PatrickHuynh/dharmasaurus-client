@@ -273,7 +273,7 @@ const DojoDefinitions = () => {
                     </Col>
                   )}
                 </Row>
-                <Row className="d-flex justify-content-center">
+                <Row className="d-flex justify-content-center mt-3">
                   {memorisedStack.length > 0 && (
                     <Col>
                       <h2>Your memorised definitions</h2>
@@ -416,7 +416,7 @@ const DojoDefinitions = () => {
 
   const handleRecallNow = (id) => {
     // does the same thing as clicking "hard"
-    incrementRecall(true, 1, id);
+    incrementRecall(false, 1, id);
     updateStacks();
   };
 
