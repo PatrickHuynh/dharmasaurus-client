@@ -5,6 +5,7 @@ import stringSimilarity from "string-similarity";
 
 const DojoDefinitions = () => {
   const { objects, setObjects } = useContext(ObjectsContext);
+  const [appVersion, setAppVersion] = useState(0); // this is used to detect old datastructure versions
   const [appPosition, setAppPosition] = useState(1);
   const [loadingObjects, setLoadingObjects] = useState(true);
   const [mainTopicsFilter, setMainTopicsFilter] = useState({});
@@ -14,10 +15,12 @@ const DojoDefinitions = () => {
   const isFirstRender = useRef(true);
 
   // practice states
-  const [practiceInSession, setPracticeInSession] = useState(false);
-  const [practiceStack, setPracticeStack] = useState([]);
+  const [recallStack, setRecallStack] = useState([]);
   const [memorisedStack, setMemorisedStack] = useState([]);
   const [revealDefinition, setRevealDefinition] = useState(false);
+
+  // stats states
+  const [resetDanger, setResetDanger] = useState(true);
 
   // GLOBAL APP STATES --------------------------------------------------------------------------------------------------
 
@@ -72,7 +75,7 @@ const DojoDefinitions = () => {
       return;
     }
     saveAppStateToLocalStorage();
-  }, [appPosition, dojoDefs, practiceStack, revealDefinition]);
+  }, [appPosition, dojoDefs, recallStack, revealDefinition]);
 
   const saveAppStateToLocalStorage = () => {
     localStorage.setItem("dojoDefinitionsAppState", JSON.stringify(compileAppState()));
@@ -80,24 +83,24 @@ const DojoDefinitions = () => {
 
   const loadAppState = (appState) => {
     let setters = {
+      appVersion: setAppVersion,
       appPosition: setAppPosition,
       dojoDefs: setDojoDefs,
-      practiceInSession: setPracticeInSession,
-      practiceStack: setPracticeStack,
+      recallStack: setRecallStack,
       memorisedStack: setMemorisedStack,
       revealDefinition: setRevealDefinition,
     };
     Object.entries(setters).map(([k, f]) => {
-      f(appState[k]);
+      if (k in appState) f(appState[k]);
     });
   };
 
   const compileAppState = () => {
     return {
+      appVersion: appVersion,
       appPosition: appPosition,
       dojoDefs: dojoDefs,
-      practiceInSession: practiceInSession,
-      practiceStack: practiceStack,
+      recallStack: recallStack,
       memorisedStack: memorisedStack,
       revealDefinition: revealDefinition,
     };
@@ -177,11 +180,8 @@ const DojoDefinitions = () => {
     );
   };
 
-  // TODO: SESSION START/END STATE
   const pagePractice = () => {
-    let noSelectedDefintions = Object.entries(dojoDefs).every(([key, val]) => {
-      return !val;
-    });
+    let noSelectedDefintions = Object.values(dojoDefs).every((val) => !val.active);
 
     if (noSelectedDefintions)
       return (
@@ -194,44 +194,22 @@ const DojoDefinitions = () => {
         </Container>
       );
 
-    const sessionControl = () => {
-      return (
-        <Row>
-          <Col className="bg-secondary d-flex justify-content-center">
-            <div className="m-1">
-              <Stack direction="horizontal" className="p-1" gap={1}>
-                {practiceInSession ? (
-                  <Button size="sm" variant="danger" style={{ minWidth: "200px" }} onClick={() => handlePracticeSessionChange(!practiceInSession)}>
-                    Click to End and Save Progess
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="success" style={{ minWidth: "200px" }} onClick={() => handlePracticeSessionChange(!practiceInSession)}>
-                    Click to Begin Session
-                  </Button>
-                )}
-              </Stack>
-            </div>
-          </Col>
-        </Row>
-      );
-    };
-
     const definitionsRecallUI = () => {
       return (
         <>
           <Row style={{ minHeight: "350px" }}>
-            {practiceStack.length > 0 ? (
+            {recallStack.length > 0 ? (
               <Col className="d-flex justify-content-center">
                 <Container fluid className="py-5">
                   <Row>
                     <Col className="d-flex justify-content-center">
-                      <h2>{practiceStack[0].name}</h2>
+                      <h2>{getObject(recallStack[0]).name}</h2>
                     </Col>
                   </Row>
                   <Row className="my-5">
                     <Col className="d-flex justify-content-center">
                       {revealDefinition ? (
-                        practiceStack[0].definition
+                        getObject(recallStack[0]).definition
                       ) : (
                         <Button variant="outline-primary" onClick={() => setRevealDefinition(true)}>
                           Reveal definition
@@ -266,51 +244,76 @@ const DojoDefinitions = () => {
               <Col className="d-flex justify-content-center">
                 <Container fluid className="py-5">
                   <Row>
-                    <Col className="d-flex justify-content-center">{practiceInSession ? <h1>All definitions recalled!</h1> : <h1>Click above to start a new memorising session</h1>}</Col>
+                    <Col className="d-flex justify-content-center">
+                      <h2>No definitions to practice recalling at the moment, come back later to review!</h2>
+                    </Col>
                   </Row>
                 </Container>
               </Col>
             )}
           </Row>
-          {practiceInSession && (
-            <Row className="bg-warning py-5">
-              <Col>
-                <Container>
-                  <Row xs={1} sm={practiceStack.length > 0 ? 2 : 1} className="d-flex justify-content-center">
-                    {practiceStack.length > 0 && (
-                      <Col>
-                        <h2>Definitions to recall</h2>
-                        <ol>
-                          {practiceStack.map((x) => {
-                            return <li key={"ps_" + x.id}>{x.name}</li>;
-                          })}
-                        </ol>
-                      </Col>
-                    )}
+          <Row className="bg-light py-5">
+            <Col>
+              <Container>
+                <Row className="d-flex justify-content-center">
+                  {recallStack.length > 0 && (
                     <Col>
-                      <h2>Memorised definitions</h2>
-                      <ul className="ul-memorised">
-                        {memorisedStack.map((x) => {
-                          return <li key={"ms_" + x.id}>{x.name}</li>;
+                      <h2>Definitions to recall</h2>
+                      <ol>
+                        {recallStack.map((id) => {
+                          let def = objects.find((v) => v._id == id);
+                          let x = dojoDefs[id];
+                          return <li key={id}>{def.name}</li>;
                         })}
-                      </ul>
+                      </ol>
                     </Col>
-                  </Row>
-                  <Row className="bg-success"></Row>
-                </Container>
-              </Col>
-            </Row>
-          )}
+                  )}
+                </Row>
+                <Row className="d-flex justify-content-center">
+                  {memorisedStack.length > 0 && (
+                    <Col>
+                      <h2>Your memorised definitions</h2>
+                      <Table striped bordered hover size="sm" className="mx-1 mt-3">
+                        <thead>
+                          <tr>
+                            <th>&#128077;</th>
+                            <th>Definition</th>
+                            <th className="text-center">Next review</th>
+                            <th className="text-center">Recall</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {memorisedStack.map((id) => {
+                            let def = getObject(id);
+                            let x = dojoDefs[id];
+                            return (
+                              <tr key={id} className="align-middle">
+                                <td width={"10px"}>&#9989;</td>
+                                <td className="px-2"> {def.name}</td>
+                                <td className="text-center">
+                                  {new Date(x.nextReview).toLocaleDateString()} {new Date(x.nextReview).toLocaleTimeString()}
+                                </td>
+                                <td className="text-center">
+                                  <Button size="sm" variant="warning" onClick={() => handleRecallNow(id)}>
+                                    Recall now
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </Col>
+                  )}
+                </Row>
+              </Container>
+            </Col>
+          </Row>
         </>
       );
     };
 
-    return (
-      <>
-        {sessionControl()}
-        {definitionsRecallUI()}
-      </>
-    );
+    return <>{definitionsRecallUI()}</>;
   };
 
   const pageStats = () => {
@@ -319,6 +322,37 @@ const DojoDefinitions = () => {
         <Row className="py-5">
           <Col className="d-flex justify-content-center">
             <h1>Under development, come back later!</h1>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table striped bordered hover size="sm" className="mx-1 mt-3">
+              <thead>
+                <tr>
+                  <th>Definition</th>
+                  <th className="text-center">Recall Strength</th>
+                  <th className="text-center">Reset Progress</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(dojoDefs)
+                  .sort((a, b) => (a.interval < b.interval ? 1 : -1))
+                  .map((def) => {
+                    let objDef = getObject(def.id);
+                    return (
+                      <tr key={"stat_" + def.id}>
+                        <td> {objDef.name} </td>
+                        <td className="text-center">{getStrengthLabel(def.interval)}</td>
+                        <td className="text-center">
+                          <Button variant="danger" onClick={() => handleResetProgress(def.id)}>
+                            Reset Progress
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </Table>
           </Col>
         </Row>
       </Container>
@@ -357,48 +391,49 @@ const DojoDefinitions = () => {
     try {
       updateDefs[id].active = updateDefs[id].active == true ? false : true;
     } catch {
-      updateDefs[id] = { active: true };
+      updateDefs[id] = { id: id, active: true, interval: 0, nextReview: Date.now() };
     }
     setDojoDefs(updateDefs);
   };
 
-  // practice handlers
-  const handlePracticeSessionChange = (newState) => {
-    if (newState) {
-      // compile practice stack
-      let stack = Object.entries(dojoDefs)
-        .map(([id, val]) => {
-          return { id: id, ...val };
-        })
-        .filter((x) => x.active)
-        .map((def) => {
-          let obj = objects.find((obj) => obj._id === def.id);
-          return { ...def, ...obj };
-        });
-      setPracticeStack(stack);
-      setMemorisedStack([]);
-    } else {
-      // update practice parameters, and save to cloud if user is logged in
-      setPracticeStack([]);
-      setMemorisedStack([]);
-    }
-    setPracticeInSession(newState);
-  };
-
   const handleDefinitionRecall = (difficulty) => {
-    // if 0 or 1 = forgot/hard // pull from top of stack and push to bottom
     setRevealDefinition(false);
     if (difficulty === 0 || difficulty === 1) {
-      setPracticeStack([...practiceStack.slice(1), practiceStack[0]]);
+      // if 0 or 1 = forgot/hard
+      incrementRecall(false, difficulty, recallStack[0]);
+    } else if (difficulty === 2) {
+      // if 2 = easy
+      incrementRecall(true, difficulty, recallStack[0]);
     }
-    // if 2 = easy // push to memorised
-    else if (difficulty === 2) {
-      setMemorisedStack([practiceStack[0], ...memorisedStack]);
-      setPracticeStack([...practiceStack.slice(1)]);
+    updateStacks();
+  };
+
+  const handleRecallNow = (id) => {
+    // does the same thing as clicking "hard"
+    incrementRecall(true, 1, id);
+    updateStacks();
+  };
+
+  const handleResetProgress = (id) => {
+    let confirm = true;
+    if (resetDanger) {
+      confirm = window.confirm("Reset progress back to zero? Caution: there is no undo!");
+    }
+    if (confirm) {
+      // do the same thing as "forgot"
+      incrementRecall(true, 0, id);
+      updateStacks();
+      setResetDanger(false);
     }
   };
 
-  // UTILS ---------------------------------------------------------------------------------------------------------
+  // UTILS ------------------------------------------------------------------------------------------------------------------
+
+  const getObject = (id) => {
+    return objects.find((v) => v._id == id);
+  };
+
+  // UTILS SETTINGS ---------------------------------------------------------------------------------------------------------
 
   const filterSearchObjects = () => {
     let searchTextLower = searchText.toLowerCase();
@@ -445,8 +480,75 @@ const DojoDefinitions = () => {
     return filteredObjects;
   };
 
-  // PAGE RENDER ---------------------------------------------------------------------------------------------------------
+  // UTILS PRACTICE ---------------------------------------------------------------------------------------------------------
+  const incrementRecall = (increment, difficulty, id) => {
+    const getNextInterval = (getNext, interval) => {
+      let nextInterval;
+      if (getNext) {
+        if (interval == 0) {
+          nextInterval = 1;
+        } else {
+          nextInterval = interval * 2;
+        }
+      } else {
+        nextInterval = interval / 2;
+        if (nextInterval < 1) nextInterval = 0;
+      }
+      nextInterval = Math.min(Math.max(nextInterval, 0), 32); // 0-30 days recall interval only
+      return nextInterval;
+    };
 
+    let dojoDef = dojoDefs[id];
+    let nextInterval = getNextInterval(increment, dojoDef.interval);
+    let nextDojoDefs = { ...dojoDefs };
+    dojoDef = { ...dojoDef, interval: nextInterval, nextReview: Date.now() + Math.floor(nextInterval * 24 * 3600 * 1000) };
+    if (difficulty === 0) {
+      // forgot completely - reset to zero
+      dojoDef = { ...dojoDef, interval: 0, nextReview: Date.now() }; // recall again now
+    } else if (difficulty === 1) {
+      dojoDef = { ...dojoDef, nextReview: Date.now() + Math.floor(2 * 60 * 1000) }; // recall in 2 minutes
+    }
+    nextDojoDefs[id] = dojoDef;
+    setDojoDefs(nextDojoDefs);
+  };
+
+  useEffect(() => {
+    updateStacks();
+  }, [dojoDefs]);
+
+  const updateStacks = () => {
+    let stackRecall = [];
+    let stackMemorised = [];
+    let sortedDojoDefs = [...Object.values(dojoDefs)];
+    sortedDojoDefs = sortedDojoDefs.filter((x) => x.active);
+    sortedDojoDefs.sort((a, b) => (a.nextReview > b.nextReview ? 1 : -1));
+    sortedDojoDefs.forEach((def) => {
+      let recallCutOff = Date.now() + 10 * 60 * 1000;
+      if (def.nextReview <= recallCutOff) {
+        stackRecall.push(def.id);
+      } else {
+        stackMemorised.push(def.id);
+      }
+    });
+    setRecallStack(stackRecall);
+    setMemorisedStack(stackMemorised);
+  };
+
+  // UTILS STATS ---------------------------------------------------------------------------------------------------------
+  const getStrengthLabel = (str) => {
+    let labels = {
+      2: "Newbie",
+      12: "Learner",
+      24: "Adept",
+      1000: "Master",
+    };
+    let checkpoints = Object.keys(labels);
+    for (var i = 0; i < checkpoints.length; i++) {
+      if (str <= checkpoints[i]) return `(${str}) ` + labels[checkpoints[i]];
+    }
+  };
+
+  // PAGE RENDER ---------------------------------------------------------------------------------------------------------
   return (
     <Container fluid className="m-0">
       <Row>
