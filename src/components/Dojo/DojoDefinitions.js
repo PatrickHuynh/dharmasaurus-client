@@ -6,6 +6,7 @@ import stringSimilarity from "string-similarity";
 const DojoDefinitions = () => {
   const { objects, setObjects } = useContext(ObjectsContext);
   const [appVersion, setAppVersion] = useState(0); // this is used to detect old datastructure versions
+  const [lastUpdated, setLastUpdated] = useState(0);
   const [appPosition, setAppPosition] = useState(1);
   const [loadingObjects, setLoadingObjects] = useState(true);
   const [mainTopicsFilter, setMainTopicsFilter] = useState({});
@@ -63,6 +64,7 @@ const DojoDefinitions = () => {
       } catch {}
     } else {
       // TODO future get from api store
+      // if local storage is > last updated, then use local storage instead of cloud
       setAppPosition(1);
       setDojoDefs({});
     }
@@ -84,6 +86,7 @@ const DojoDefinitions = () => {
   const loadAppState = (appState) => {
     let setters = {
       appVersion: setAppVersion,
+      lastUpdated: setLastUpdated,
       appPosition: setAppPosition,
       dojoDefs: setDojoDefs,
       recallStack: setRecallStack,
@@ -98,6 +101,7 @@ const DojoDefinitions = () => {
   const compileAppState = () => {
     return {
       appVersion: appVersion,
+      lastUpdated: lastUpdated,
       appPosition: appPosition,
       dojoDefs: dojoDefs,
       recallStack: recallStack,
@@ -340,11 +344,11 @@ const DojoDefinitions = () => {
                   .map((def) => {
                     let objDef = getObject(def.id);
                     return (
-                      <tr key={"stat_" + def.id}>
+                      <tr key={"stat_" + def.id} className="align-middle">
                         <td> {objDef.name} </td>
                         <td className="text-center">{getStrengthLabel(def.interval)}</td>
                         <td className="text-center">
-                          <Button variant="danger" onClick={() => handleResetProgress(def.id)}>
+                          <Button size="sm" variant="danger" onClick={() => handleResetProgress(def.id)}>
                             Reset Progress
                           </Button>
                         </td>
@@ -406,6 +410,8 @@ const DojoDefinitions = () => {
       incrementRecall(true, difficulty, recallStack[0]);
     }
     updateStacks();
+    // any time a definition is recalled, update the last updated
+    setLastUpdated(Date.now());
   };
 
   const handleRecallNow = (id) => {
