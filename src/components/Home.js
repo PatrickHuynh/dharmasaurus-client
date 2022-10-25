@@ -4,9 +4,9 @@ import { LinkContainer } from "react-router-bootstrap";
 const Home = () => {
   return (
     <Container fluid className="navgradient min-vh-100">
-      <Row style={{ backgroundImage: "url('/space_rainbow_background.jpg')", backgroundSize: "cover" }}>
+      <Row style={{ backgroundImage: "url('/space_rainbow_background.jpg')", backgroundSize: "cover", height: "250px" }}>
         <Col className="text-center">
-          <img src="./dharmasaurus.png" style={{ maxWidth: "90%" }} />
+          <img src="./dharmasaurus.png" style={{ height: "250px" }} />
         </Col>
       </Row>
       <Row>
