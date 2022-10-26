@@ -142,9 +142,29 @@ const DojoDefinitions = () => {
     return (
       <>
         <Row>
-          <InputGroup size="sm" className="mt-3">
-            <Form.Control placeholder="Filter by object name" aria-label="Filter by object name" onChange={handleChangeSearch} />
-          </InputGroup>
+          <Col>
+            <InputGroup size="sm" className="mt-3">
+              <Form.Control placeholder="Filter by object name" aria-label="Filter by object name" onChange={handleChangeSearch} />
+            </InputGroup>
+          </Col>
+        </Row>
+        <Row className="mt-3">
+          <Col>
+            <Button
+              size="sm"
+              variant="dark"
+              onClick={() => handleAddMany(TKSLDefinitions)}
+              disabled={TKSLDefinitions.every((id) => {
+                try {
+                  return dojoDefs[id].active;
+                } catch {
+                  return false;
+                }
+              })}
+            >
+              Add TKSL Definitions
+            </Button>
+          </Col>
         </Row>
         <Row>
           <Col>
@@ -307,6 +327,13 @@ const DojoDefinitions = () => {
                           })}
                         </tbody>
                       </Table>
+                      <p>Note: Press recall now if you think you have forgot or it is hard. </p>
+                      <p>
+                        In this application pressing recall now ahead of review time does not increase the recall interval. We are optimising for longer time between successful repetitions to strengthen recall. (Reference:{" "}
+                        <a href="https://en.wikipedia.org/wiki/SuperMemo#Description_of_SM-2_algorithm" target="_blank">
+                          A variation of the SM-2 recall algorithm)
+                        </a>
+                      </p>
                     </Col>
                   )}
                 </Row>
@@ -335,12 +362,14 @@ const DojoDefinitions = () => {
                 <tr>
                   <th>Definition</th>
                   <th className="text-center">Recall Strength</th>
+                  <th className="text-center">Actively Learning</th>
                   <th className="text-center">Reset Progress</th>
                 </tr>
               </thead>
               <tbody>
                 {Object.values(dojoDefs)
                   .sort((a, b) => (a.interval < b.interval ? 1 : -1))
+                  .sort((a, b) => (a.active < b.active ? 1 : -1))
                   .map((def) => {
                     let objDef = getObject(def.id);
                     return (
@@ -348,8 +377,19 @@ const DojoDefinitions = () => {
                         <td> {objDef.name} </td>
                         <td className="text-center">{getStrengthLabel(def.interval)}</td>
                         <td className="text-center">
+                          {def.active ? (
+                            <Button size="sm" variant="success">
+                              Active
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="dark">
+                              Not Active
+                            </Button>
+                          )}
+                        </td>
+                        <td className="text-center">
                           <Button size="sm" variant="danger" onClick={() => handleResetProgress(def.id)}>
-                            Reset Progress
+                            Reset
                           </Button>
                         </td>
                       </tr>
@@ -400,6 +440,19 @@ const DojoDefinitions = () => {
     setDojoDefs(updateDefs);
   };
 
+  const handleAddMany = (list) => {
+    let updateDefs = { ...dojoDefs };
+    list.forEach((id) => {
+      try {
+        updateDefs[id].active = true;
+      } catch {
+        updateDefs[id] = { id: id, active: true, interval: 0, nextReview: Date.now() };
+      }
+    });
+    setDojoDefs(updateDefs);
+  };
+
+  // practice handlers
   const handleDefinitionRecall = (difficulty) => {
     setRevealDefinition(false);
     if (difficulty === 0 || difficulty === 1) {
@@ -440,6 +493,8 @@ const DojoDefinitions = () => {
   };
 
   // UTILS SETTINGS ---------------------------------------------------------------------------------------------------------
+
+  const TKSLDefinitions = ["6342c274844eb81845637b84", "633a5e7afb4cee9cb4d886b9", "633a5f95895aab006667f2c0", "6342c27b844eb81845637b87", "6342c26d844eb81845637b81", "6342c276844eb81845637b85", "6342c266844eb81845637b7e", "6342c264844eb81845637b7d", "6342c25c844eb81845637b7a", "6342c268844eb81845637b7f", "6342c000844eb81845637af4", "6342c27d844eb81845637b88", "6342c2b1844eb81845637b9e", "6342c2af844eb81845637b9d", "6342c2b4844eb81845637b9f", "6342c24e844eb81845637b74", "6342c250844eb81845637b75", "6342c255844eb81845637b77", "6342c253844eb81845637b76", "6342c258844eb81845637b78", "6342c1ec844eb81845637b4a", "6342c1f3844eb81845637b4d", "6342c1fa844eb81845637b50", "6342c1d7844eb81845637b41", "6342c199844eb81845637b34", "6342c1e3844eb81845637b46", "6342c1e0844eb81845637b45", "6342c1d9844eb81845637b42", "6342c1e5844eb81845637b47", "6342c1de844eb81845637b44", "6342c1dc844eb81845637b43", "6342c1c2844eb81845637b38", "6342c26a844eb81845637b80"];
 
   const filterSearchObjects = () => {
     let searchTextLower = searchText.toLowerCase();
