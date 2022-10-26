@@ -9,13 +9,13 @@ const Navbar = () => {
   const navComponents = () => {
     return (
       <Row>
-        <Col>
+        <Col className="text-center text-sm-start">
           <Link className={`m-1 text-light`} style={{ textDecoration: "none" }} to="/">
             <img src="/dharmasaurus.png" height="50" alt="" className="p-1" />
             <b> Dharmasaurus</b>
           </Link>
         </Col>
-        <Col md="auto align-self-center">
+        <Col className="d-flex justify-content-center" md="auto align-self-center">
           <Stack className="m-1" direction="horizontal" gap={2}>
             <Link className={`btn ${loc.pathname === "/" ? "btn-warning" : "btn-outline-light border-0"} btn-sm`} to="/">
               Home
