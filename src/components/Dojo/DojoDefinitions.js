@@ -115,25 +115,33 @@ const DojoDefinitions = () => {
   const pageBegin = () => {
     return (
       <>
-        <Row>
-          <Col>
-            <Button className="my-5" variant="danger">
-              <h1>Still under development - your progress may be lost any time</h1>
-            </Button>
-            <h1>Instructions</h1>
-            <ol>
-              <li>Begin here</li>
-              <li>Click settings, and add definitions to your memory list</li>
-              <li>
-                Click practice to begin memorisation
-                <ul>
-                  <li>Successful memorisation is self examined</li>
-                </ul>
-              </li>
-              <li>The stats tab tracks your progress and lets you know what you need to work on, and what you have memorised</li>
-            </ol>
-          </Col>
-        </Row>
+        <Container>
+          <Row>
+            <Col>
+              <Row>
+                <Col>
+                  <div className="text-center">
+                    <Button className="my-5" variant="danger">
+                      <h1>Still under development - your progress may be lost any time</h1>
+                    </Button>
+                  </div>
+                  <h1>Instructions</h1>
+                  <ol>
+                    <li>Begin here</li>
+                    <li>Click settings, and add definitions to your memory list</li>
+                    <li>
+                      Click practice to begin memorisation
+                      <ul>
+                        <li>Successful memorisation is self examined</li>
+                      </ul>
+                    </li>
+                    <li>The stats tab tracks your progress and lets you know what you need to work on, and what you have memorised</li>
+                  </ol>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
       </>
     );
   };
