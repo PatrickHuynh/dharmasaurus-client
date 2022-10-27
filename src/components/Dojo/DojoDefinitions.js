@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { Container, Row, Col, InputGroup, Form, Table, Button, Stack } from "react-bootstrap";
+import { Container, Row, Col, InputGroup, Form, Table, Button, Stack, Spinner } from "react-bootstrap";
 import { ObjectsContext, UserContext } from "../../utils/Contexts";
 import stringSimilarity from "string-similarity";
 
 const DojoDefinitions = () => {
   const { objects, setObjects } = useContext(ObjectsContext);
+  const { user, setUser } = useContext(UserContext);
+
+  // app states
+  const [appLoading, setAppLoading] = useState(true);
   const [appVersion, setAppVersion] = useState(0); // this is used to detect old datastructure versions
   const [lastUpdated, setLastUpdated] = useState(0);
   const [appPosition, setAppPosition] = useState(1);
@@ -12,6 +16,10 @@ const DojoDefinitions = () => {
   const [mainTopicsFilter, setMainTopicsFilter] = useState({});
   const [searchText, setSearchText] = useState("");
   const [dojoDefs, setDojoDefs] = useState({});
+  const [appCloudStateChanged, setCloudAppStateChanged] = useState(false);
+
+  const [savingDataToCloud, setSavingDataToCloud] = useState(false);
+  const [loadingDataFromCloud, setLoadingDataFromCloud] = useState(false);
 
   const isFirstRender = useRef(true);
 
@@ -24,6 +32,8 @@ const DojoDefinitions = () => {
   const [resetDanger, setResetDanger] = useState(true);
 
   // GLOBAL APP STATES --------------------------------------------------------------------------------------------------
+
+  const apiEndpoint = "https://us-central1-dharmasaurus-0.cloudfunctions.net/api";
 
   // get definitions (need to refactor this as duplicated from other definitions)
   useEffect(() => {
@@ -56,18 +66,15 @@ const DojoDefinitions = () => {
 
   // on load get app state
   useEffect(() => {
-    const appFullState = localStorage.getItem("dojoDefinitionsAppState");
-    if (appFullState) {
-      try {
-        const localAppState = JSON.parse(appFullState);
-        loadAppState(localAppState);
-      } catch {}
-    } else {
-      // TODO future get from api store
-      // if local storage is > last updated, then use local storage instead of cloud
+    try {
+      let appFullState = localStorage.getItem("dojoDefinitionsAppState");
+      appFullState = JSON.parse(appFullState);
+      loadAppState(appFullState);
+    } catch {
       setAppPosition(1);
       setDojoDefs({});
     }
+    setAppLoading(false);
   }, []);
 
   // on state change save to local storage
@@ -110,6 +117,36 @@ const DojoDefinitions = () => {
     };
   };
 
+  const putAppStateToCloud = async () => {
+    if (!checkSignIn()) {
+      alert("(Optional) Settings and progress will persist on this device but not be synchonised on other devices. Sign in to enable synchronisation settings and progress across devices.");
+      return;
+    }
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + user.accessToken },
+      body: JSON.stringify(compileAppState()),
+    };
+    let response = await fetch(`${apiEndpoint}/dojo/definitions/appState`, requestOptions);
+    setCloudAppStateChanged(false);
+    setSavingDataToCloud(false);
+  };
+
+  const getAppStateFromCloud = async () => {
+    try {
+      const requestOptions = {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + user.accessToken },
+      };
+      let response = await fetch(`${apiEndpoint}/dojo/definitions/appState`, requestOptions);
+      let appStateData = await response.json();
+      return appStateData;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  };
+
   // BEGIN PAGES ---------------------------------------------------------------------------------------------------------
 
   const pageBegin = () => {
@@ -121,8 +158,8 @@ const DojoDefinitions = () => {
               <Row>
                 <Col>
                   <div className="text-center">
-                    <Button className="my-5" variant="danger">
-                      <h1>Still under development - your progress may be lost any time</h1>
+                    <Button className="my-5" variant="warning">
+                      <h1>Still under development - your progress may be lost</h1>
                     </Button>
                   </div>
                   <h1>Instructions</h1>
@@ -158,20 +195,41 @@ const DojoDefinitions = () => {
         </Row>
         <Row className="mt-3">
           <Col>
-            <Button
-              size="sm"
-              variant="dark"
-              onClick={() => handleAddMany(TKSLDefinitions)}
-              disabled={TKSLDefinitions.every((id) => {
-                try {
-                  return dojoDefs[id].active;
-                } catch {
-                  return false;
-                }
-              })}
-            >
-              Add TKSL Definitions
-            </Button>
+            <Stack direction="horizontal" gap={1}>
+              <Button
+                size="sm"
+                variant="dark"
+                onClick={() => handleAddMany(TKSLDefinitions)}
+                disabled={TKSLDefinitions.every((id) => {
+                  try {
+                    return dojoDefs[id].active;
+                  } catch {
+                    return false;
+                  }
+                })}
+              >
+                Add TKSL Definitions
+              </Button>
+              {savingDataToCloud ? (
+                <Button size="sm" variant="dark" disabled={!appCloudStateChanged}>
+                  <Spinner size="sm" animation="border" role="status"></Spinner>
+                </Button>
+              ) : (
+                <Button size="sm" variant="dark" onClick={() => handlePutDataToCloud()} disabled={!appCloudStateChanged}>
+                  Save Settings To Cloud
+                </Button>
+              )}
+
+              {loadingDataFromCloud ? (
+                <Button size="sm" variant="dark">
+                  <Spinner size="sm" animation="border" role="status"></Spinner>
+                </Button>
+              ) : (
+                <Button size="sm" variant="dark" onClick={() => handleGetAppStateToCloud()}>
+                  Load Settings From Cloud
+                </Button>
+              )}
+            </Stack>
           </Col>
         </Row>
         <Row>
@@ -221,6 +279,19 @@ const DojoDefinitions = () => {
           <Row className="py-5">
             <Col className="d-flex justify-content-center">
               <h1>Go back to settings to select some definitions to memorise first!</h1>
+            </Col>
+          </Row>
+          <Row className="py-5">
+            <Col className="d-flex justify-content-center">
+              {loadingDataFromCloud ? (
+                <Button size="sm" variant="dark">
+                  <Spinner size="sm" animation="border" role="status"></Spinner>
+                </Button>
+              ) : (
+                <Button size="sm" variant="dark" onClick={() => handleGetAppStateToCloud()}>
+                  Load Settings From Cloud
+                </Button>
+              )}
             </Col>
           </Row>
         </Container>
@@ -283,6 +354,19 @@ const DojoDefinitions = () => {
                 </Container>
               </Col>
             )}
+          </Row>
+          <Row className="bg-light py-3">
+            <Col className="d-flex justify-content-center">
+              {savingDataToCloud ? (
+                <Button size="sm" variant="dark" disabled={!appCloudStateChanged}>
+                  <Spinner size="sm" animation="border" role="status"></Spinner>
+                </Button>
+              ) : (
+                <Button size="sm" variant="dark" onClick={() => handlePutDataToCloud()} disabled={!appCloudStateChanged}>
+                  Save Progress To Cloud
+                </Button>
+              )}
+            </Col>
           </Row>
           <Row className="bg-light py-5">
             <Col>
@@ -386,11 +470,11 @@ const DojoDefinitions = () => {
                         <td className="text-center">{getStrengthLabel(def.interval)}</td>
                         <td className="text-center">
                           {def.active ? (
-                            <Button size="sm" variant="success">
+                            <Button size="sm" variant="success" disabled={true}>
                               Active
                             </Button>
                           ) : (
-                            <Button size="sm" variant="dark">
+                            <Button size="sm" variant="dark" disabled={true}>
                               Not Active
                             </Button>
                           )}
@@ -433,6 +517,26 @@ const DojoDefinitions = () => {
     setAppPosition(state);
   };
 
+  const handlePutDataToCloud = () => {
+    putAppStateToCloud();
+    setSavingDataToCloud(true);
+  };
+
+  const handleGetAppStateToCloud = () => {
+    if (!checkSignIn()) {
+      alert("(Optional) Settings and progress will persist on this device but not be synchonised on other devices. Sign in to enable synchronisation settings and progress across devices.");
+      return;
+    }
+    loadAppStateFromCloud();
+    setLoadingDataFromCloud(true);
+  };
+
+  const loadAppStateFromCloud = async () => {
+    let appState = await getAppStateFromCloud();
+    if (Object.keys(appState).length !== 0) loadAppState(appState);
+    setLoadingDataFromCloud(false);
+  };
+
   // settings handlers
   const handleChangeSearch = (e) => {
     setSearchText(e.target.value);
@@ -446,6 +550,8 @@ const DojoDefinitions = () => {
       updateDefs[id] = { id: id, active: true, interval: 0, nextReview: Date.now() };
     }
     setDojoDefs(updateDefs);
+    setCloudAppStateChanged(true);
+    setLastUpdated(Date.now());
   };
 
   const handleAddMany = (list) => {
@@ -458,6 +564,8 @@ const DojoDefinitions = () => {
       }
     });
     setDojoDefs(updateDefs);
+    setCloudAppStateChanged(true);
+    setLastUpdated(Date.now());
   };
 
   // practice handlers
@@ -473,12 +581,14 @@ const DojoDefinitions = () => {
     updateStacks();
     // any time a definition is recalled, update the last updated
     setLastUpdated(Date.now());
+    setCloudAppStateChanged(true);
   };
 
   const handleRecallNow = (id) => {
     // does the same thing as clicking "hard"
     incrementRecall(false, 1, id);
     updateStacks();
+    setCloudAppStateChanged(true);
   };
 
   const handleResetProgress = (id) => {
@@ -498,6 +608,12 @@ const DojoDefinitions = () => {
 
   const getObject = (id) => {
     return objects.find((v) => v._id == id);
+  };
+
+  const checkSignIn = () => {
+    let userCheck = localStorage.getItem("user");
+    if (!user) return false;
+    return true;
   };
 
   // UTILS SETTINGS ---------------------------------------------------------------------------------------------------------
