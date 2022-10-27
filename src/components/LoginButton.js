@@ -1,8 +1,8 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
 import { initializeApp } from "firebase/app";
 import { getFirestore, query, getDocs, collection, where, updateDoc, doc, setDoc, addDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { UserContext } from "../utils/Contexts";
 
 const firebaseConfig = {
@@ -22,24 +22,33 @@ const auth = getAuth();
 
 const LoginButton = () => {
   const { user, setUser } = useContext(UserContext);
-
   useEffect(() => {
-    const loggedInUser = localStorage.getItem("user");
-    if (loggedInUser) {
-      const foundUser = JSON.parse(loggedInUser);
-      setUser(foundUser);
-    } else {
-      setUser(false);
-    }
+    const refreshLogin = async () => {
+      let localUser = localStorage.getItem("user");
+      if (localUser) {
+        auth.onAuthStateChanged(async (user) => {
+          let localUser = localStorage.getItem("user");
+          let idToken = await auth.currentUser.getIdToken(true);
+          localUser = JSON.parse(localUser);
+          localUser.accessToken = idToken;
+          localUser.token = idToken;
+          localUser.stsTokenManager.expirationTime = Date.now() + 45 * 60 * 1000;
+          localStorage.setItem("user", JSON.stringify(localUser));
+          setUser(localUser);
+        });
+        setUser(localUser);
+      } else {
+        setUser(false);
+      }
+    };
+    refreshLogin();
   }, []);
 
   const handleSignIn = async (e) => {
     try {
       const res = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(res);
-      const token = credential.accessToken;
-      const user = { ...res.user, token };
-      console.log(user);
+      //const credential = GoogleAuthProvider.credentialFromResult(res);
+      const user = { ...res.user };
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
       const q = query(collection(db, "users"), where("uid", "==", user.uid));
@@ -68,19 +77,23 @@ const LoginButton = () => {
     localStorage.removeItem("user");
   };
 
-  return (
-    <>
-      {user ? (
-        <Button size="sm" variant="danger" onClick={handleSignOut}>
+  const loginButtonStates = () => {
+    if (user) {
+      return (
+        <Button size="sm" variant="success" onClick={() => handleSignOut()}>
           Sign Out
         </Button>
-      ) : (
-        <Button size="sm" variant="outline-primary" onClick={handleSignIn}>
-          Sign In
+      );
+    } else {
+      return (
+        <Button size="sm" variant="outline-primary" onClick={() => handleSignIn()}>
+          Login
         </Button>
-      )}
-    </>
-  );
+      );
+    }
+  };
+
+  return loginButtonStates();
 };
 
 export default LoginButton;
